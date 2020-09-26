@@ -1,0 +1,58 @@
+<div class="row text-center" *ngIf="busca == false">
+    <div class="offset-md-3 offset-sm-0 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body text-center m-5">
+                <div class="mb-5">
+                    Digite o numero do pedido abaixo para encontrarmos seus dados<br>
+                </div>
+                <div class="form-group">
+                    <input type="text" [(ngModel)]="pedido" class="form-control" id="pedido">
+                </div>
+                <div class="mb-2">
+                    <a class="btn btn-dark text-white" (click)="buscarPedido()">Buscar Pedido</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row text-center" *ngIf="busca == true">
+    <div class="offset-md-3 offset-sm-0 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body text-center m-5">
+                <div class="mb-5">
+                    Aqui estão os dados do seu pedido<br>
+                    <div class="row text-center mt-5">
+                            <table class="table table-bordered table-condensed table-responsive" style="overflow:auto; max-height: 350px;">
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Quantidade</th>
+                                </tr>
+                                <tr  *ngFor="let produto of dados.produtos">
+                                    <td><img src="{{produto.imagem}}" style="width:100%"></td>
+                                    <td>{{produto.descricao}}</td>
+                                    <td>R${{produto.valor}}</td>
+                                    <td>{{produto.quantidade}}</td>
+                                </tr>
+                            </table>
+                            <table class="table table-bordered table-condensed table-responsive" style="overflow-x: scroll;overflow:auto; max-height: 350px;">
+                                <tr>
+                                    <th>Data do Pedido</th>
+                                    <th>Valor Total</th>
+                                    <th>Situação Atual</th>
+                                    <th>Codigo de Rastreamento</th>
+                                </tr>
+                                <tr>
+                                    <td>{{dados.data_pedido | date: 'dd/MM/yyyy'}}</td>
+                                    <td>R${{dados.valor}}</td>
+                                    <td>{{dados.status}}</td>
+                                    <td>{{dados.codigo_frete}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,269 @@
+<div class="loader col-12" *ngIf="loading == true && parabens == false"></div>
+<div class="row" *ngIf="finalizado == 0 && loading == false && parabens == false">
+    <div class="col-md-8 col-sm-12 table-responsive-sm">
+        <table class="table" style="overflow:auto; max-height: 350px;">
+            <tr class="border-1 border-dark bg-dark text-white" style="border-style: solid;">
+                <th class="col-md-2 text-center h5 mt-1">Produto</th>
+                <th class="col-md-2 text-center h5 mt-1" scope="col">Descrição</th>
+                <th class="col-md-2 text-center h5 mt-1" scope="col">Valor</th>
+                <th class="col-md-2 text-center h5 mt-1" scope="col">Quantidade</th>
+                <th class="col-md-2 text-center h5 mt-1" scope="col">Valor Total</th>
+                <th class="col-md-2 text-center h5 mt-1" scope="col">Remover</th>
+            </tr>
+                <td *ngIf="sacola.length == 0" class="text-center" colspan="5">Não há itens adicionados!</td>
+                <tr *ngFor="let produto of sacola" style="border-style: solid;">
+                    <td class="col-md-2 text-center"><img src="{{produto.imagem}}" width="100%" height="150vw"></td>
+                    <td class="col-md-2 text-center" style="top: 50%;">{{produto.descricao}}</td>
+                    <td class="col-md-2 text-center">R${{produto.valor}}</td>
+                    <td class="col-md-2 text-center">
+                        <span (click)="aumentarQuantidade(produto.id)">
+                            <i class="fa fa-sort-up fa-lg"></i>
+                        </span>
+                        <span style="pointer-events: none;user-select: none;">
+                            &nbsp;&nbsp;{{produto.quantidade}}&nbsp;&nbsp;
+                        </span>
+                        <span>
+                            <i (click)="diminuirQuantidade(produto.id)" class="fa fa-sort-down fa-lg"></i>
+                        </span>
+                    </td>
+                    <td class="col-md-2 text-center">R${{produto.valor_total*produto.quantidade}}</td>
+                    <td class="col-md-2 text-center">
+                        <span (click)="remover(produto.id)">
+                            <i class="fa fa-trash fa-lg"></i>
+                        </span>
+                    </td>
+                </tr>
+        </table>
+    </div>
+    <div class="col-md-4 col-sm-12 text-center">
+        <div class="card">
+            <div class="card-body">
+                Valor Total
+                <br>
+                <br>
+                R${{valorTotal}}
+                <br>
+                <br>
+                Calcule o Frete para seu endereço:
+                <br>
+                <div class="row text-center mt-3">
+                    <div class="col-6 offset-3">
+                        <input [(ngModel)]="cep" type="text" class="col-xs-2 form-control text-center" id="cep"
+                            name="cep" placeholder="CEP" mask="00000-000" (keyup)="calcularFrete()">
+                    </div>
+                </div>
+                <div text-justify>
+                    <div *ngIf="frete"><br>{{frete.name}} - R${{frete.price}}</div>
+                </div>
+                <br>
+                <br>
+                <a class="btn btn-dark text-white" *ngIf="valorTotal > 0" (click)="abrirFinalizado()">Finalizar Pedido</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row text-center" *ngIf="finalizado == 1 && loading == false && parabens == false">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" [(ngModel)]="email" class="form-control text-center" id="email" aria-describedby="email" required>
+                            <small id="emailHelp" class="form-text text-muted">Não iremos compartilhar seu e-mail.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="nome">Nome</label>
+                            <input type="nome" [(ngModel)]="nome" class="form-control text-center" id="nome" aria-describedby="nome" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-12">
+                        <div class="form-group">
+                            <label for="ddd">DDD</label>
+                            <input type="text" [(ngModel)]="ddd" mask="(00)" class="form-control text-center" id="ddd" aria-describedby="ddd" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12">
+                        <div class="form-group">
+                            <label for="telefone">Celular</label>
+                            <input type="text" [(ngModel)]="telefone" mask="00000-0000" class="form-control text-center" id="telefone" aria-describedby="celular" required>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-sm-12">
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" [(ngModel)]="cpf" mask="000.000.000-00" class="form-control text-center" id="cpf" aria-describedby="cpf" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="nascimento">Data Nascimento</label>
+                            <input type="text" [(ngModel)]="nascimento" mask="00/00/0000" class="form-control text-center" id="nascimento" aria-describedby="nascimento" required>
+                            <small id="nascimentoHelp" class="form-text text-muted">Formato: 00/00/0000</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" [(ngModel)]="cep" mask="00000-000" class="form-control text-center" id="cep" aria-describedby="cep" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label for="numero">Numero</label>
+                            <input type="text" [(ngModel)]="numero" class="form-control text-center" id="numero" aria-describedby="numero" required>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="rua">Rua</label>
+                        <input type="text" [(ngModel)]="rua" class="form-control text-center" id="rua" aria-describedby="rua" required>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="bairro">Bairro</label>
+                        <input type="text" [(ngModel)]="bairro" class="form-control text-center" id="bairro" aria-describedby="bairro" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" [(ngModel)]="cidade" class="form-control text-center" id="cidade" aria-describedby="cidade" required>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <input type="text" [(ngModel)]="estado" class="form-control text-center text-uppercase" id="estado" aria-describedby="estado" maxlength="2" required>
+                        <small id="nascimentoHelp" class="form-text text-muted">Sigla do estado. Exemplo: PE</small>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <label for="complemento">Complemento</label>
+                        <input type="text" [(ngModel)]="complemento" class="form-control text-center" id="complemento" aria-describedby="complemento" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        Escolha a forma de pagamento!
+                    </div>
+                    <br>
+                    <div class="col-6 mb-3">
+                        <div class="card rounded" (click)="fecharCartao()">
+                            <div class="card-body {{butaob}}">
+                                Boleto
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card rounded" (click)="abrirCartao()">
+                            <div class="card-body {{butaoc}}">
+                                Cartão
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="cartao == 1">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="numeroCartao">Numero do Cartão</label>
+                                <input type="text" [(ngModel)]="numeroCartao" (keyup)="gerarBandeira()" class="form-control text-center" id="numeroCartao" aria-describedby="numeroCartao" placeholder="Digite o numero do cartão" [required]="cartao == 1">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" [(ngModel)]="cvv" class="form-control text-center" id="cvv" aria-describedby="cvv" placeholder="Digite o cvv" [required]="cartao == 1">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="parcelas">parcelas</label>
+                                <select class="form-control  text-center" [(ngModel)]="parcela" name="" id="" [required]="cartao == 1">
+                                    <option *ngFor="let parcela of parcelas" value="{{parcela.quantity}}">{{parcela.quantity}} x R${{parcela.installmentAmount}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="mes">Mês de Vencimento</label>
+                                <input type="text" [(ngModel)]="mes" class="form-control text-center" id="mes" aria-describedby="mes" placeholder="Digite o mês de vencimento" [required]="cartao == 1">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="ano">Ano de Vencimento</label>
+                                <input type="text" [(ngModel)]="ano" class="form-control text-center" id="ano" aria-describedby="ano" placeholder="Digite o ano de vencimento" [required]="cartao == 1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-7">
+                        Valor Total
+                    </div>
+                    <div class="col-5">
+                        R${{valorTotal}}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-7">
+                        Valor Frete
+                    </div>
+                    <div class="col-5">
+                        R${{frete.price}}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <a class="btn btn-dark text-white" (click)="finalizar()">Finalizar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row text-center " *ngIf="parabens == true">
+    <div class="offset-md-3 offset-sm-0 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body text-justify m-5">
+                <p><span *ngIf="cartao == true">Parabéns pela compra, vamos apenas aguardar a confirmaçao do seu pagamento 
+                                             pela operadora de cartão.</span>
+                <span *ngIf="cartao == false">Parabéns pela compra, vamos apenas aguardar a confirmaçao do seu pagamento. 
+                                              <p>Como foi selecionado a forma de pagamento por boleto, 
+                                              está confirmação pode levar até 3 dias a partir do dia de pagamento.</p></span></p>
+                <span>Enviamos para o seu E-mail cadastrado as informações referente ao pedido.</span>
+            </div>
+        </div>
+    </div>
+</div>
